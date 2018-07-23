@@ -1,0 +1,16 @@
+{
+  "name": "streamingsocketio",
+  "version": "0.0.1",
+  "description": "Streaming test with SocketIO",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.3",
+    "socket.io": "^2.1.1"
+  }
+}

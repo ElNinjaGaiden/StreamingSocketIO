@@ -30,8 +30,8 @@ function startStream () {
             echoCancellation: true
     }};
      navigator.getUserMedia(mediaConstraints, function (stream) {
-        var video = document.querySelector('video');
-        video.srcObject = stream;
+        var input = document.getElementById('input');
+        input.srcObject = stream;
         theStream = stream;
 
         var connections = Object.getOwnPropertyNames(peerConnections);
@@ -45,9 +45,9 @@ function startStream () {
 }
 
 function stopStream () {
-    var video = document.querySelector('video');
-    video.pause();
-    video.currentTime = 0;
+    var input = document.getElementById('input');
+    input.pause();
+    input.currentTime = 0;
 
     if(theStream) {
         

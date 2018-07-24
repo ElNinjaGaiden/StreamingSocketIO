@@ -22,8 +22,8 @@ var pc = new peerConnection({ iceServers: [{ urls: "stun:stun.services.mozilla.c
 
 pc.onaddstream = function (obj) {
     console.log('on add stream', obj.stream);
-    var vid = document.getElementById('video-large');
-    vid.srcObject = obj.stream;
+    var output = document.getElementById('output');
+    output.srcObject = obj.stream;
 }
 
 // pc.onremovestream = function () {

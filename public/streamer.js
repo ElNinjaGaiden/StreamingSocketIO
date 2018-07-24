@@ -23,7 +23,13 @@ function error (err) {
 }
 
 function startStream () {
-     navigator.getUserMedia({video: true, audio: true}, function (stream) {
+    var mediaConstraints = {
+        //video: true, 
+        audio: {
+            sampleSize: 8,
+            echoCancellation: true
+    }};
+     navigator.getUserMedia(mediaConstraints, function (stream) {
         var video = document.querySelector('video');
         video.srcObject = stream;
         theStream = stream;

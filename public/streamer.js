@@ -18,18 +18,23 @@ navigator.webkitGetUserMedia ||
 navigator.mozGetUserMedia ||
 navigator.msGetUserMedia;
 
+window.addEventListener('load', function () {
+    socket.emit('streamer-connected');
+});
+
 function error (err) {
     console.warn('Error', err);
 }
 
 function startStream () {
     var mediaConstraints = {
-        video: true, 
-        audio: {
-            sampleSize: 8,
-            echoCancellation: true
-    }};
-     navigator.getUserMedia(mediaConstraints, function (stream) {
+        video: true//, 
+        // audio: {
+        //     sampleSize: 8,
+        //     echoCancellation: true
+        // }
+    };
+    navigator.getUserMedia(mediaConstraints, function (stream) {
         var input = document.getElementById('input');
         input.srcObject = stream;
         theStream = stream;
@@ -50,20 +55,22 @@ function stopStream () {
     input.currentTime = 0;
 
     if(theStream) {
-        
+        //Remove the stream from each peer connection
         var connections = Object.getOwnPropertyNames(peerConnections);
         for(var i = 0; i< connections.length; i++) {
             var pc = peerConnections[connections[i]];
             pc.removeStream(theStream);
         }
 
+        //Stop all the local tracks of the stream
         var tracks = theStream.getTracks();
         for(var i = 0; i < tracks.length; i++) {
             tracks[i].stop && tracks[i].stop();
         }
+        //"Clear" the local stream var
         theStream = null;
     }
-
+    //Emit a socket event to start to send "offers" to connected clients
     socket.emit('stop-stream');
 }
 
@@ -88,13 +95,6 @@ function createOffer (id, pc) {
                 offer: offer,
                 to: id
             });
-
-            var localStreams = pc.getLocalStreams();
-            if(theStream && !localStreams.length) {
-                console.log('Adding stream');
-                pc.addStream(theStream);
-            }
-
         }, error);
     }, error);
 }
@@ -113,9 +113,10 @@ socket.on('answer-made', function (data) {
 });
 
 socket.on('add-users', function (data) {
-    for (var i = 0; i < data.users.length; i++) {
+    var users = data.users;
+    for (var i = 0; i < users.length; i++) {
         var el = document.createElement('div'),
-            id = data.users[i];
+            id = users[i];
 
         el.setAttribute('id', id);
         el.innerHTML = id;
@@ -127,13 +128,26 @@ socket.on('add-users', function (data) {
             credential: "somecredentials" }]
         });
 
+        //Save the peer connection with the given client locally
         peerConnections[id] = peerConn;
-        createOffer(id, peerConn);
+
+        //Chech if the stream has been started before the given user gets connected 
+        if(theStream) {
+
+            //Attach the stream (if it has been started)
+            peerConn.addStream(theStream);
+
+            //Create the offer to connect to the client
+            createOffer(id, peerConn);
+        }
     }
 });
 
 socket.on('remove-user', function (id) {
     var div = document.getElementById(id);
+    var pc = peerConnections[id];
     document.getElementById('users').removeChild(div);
+    theStream && pc && pc.removeStream(theStream);
+    pc.close();
     delete peerConnections[id];
 });

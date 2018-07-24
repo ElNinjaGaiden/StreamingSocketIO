@@ -4,7 +4,7 @@ var express     = require('express'),
     socketIO    = require('socket.io'),
     publicDir   = `${__dirname}/public`,
     port        = process.env.PORT || 5000,
-    server, io, sockets = [];
+    server, io, streamerSocketId, sockets = [];
 
 app.use(express.static(__dirname));
 
@@ -25,13 +25,24 @@ io = socketIO(server);
 
 io.on('connection', (socket) => {
 
-    socket.emit('add-users', {
-        users: sockets
+    sockets.push(socket.id);
+
+    socket.on('streamer-connected', () => {
+        streamerSocketId = socket.id;
+        socket.emit('add-users', {
+            users: sockets.filter(s => s !== socket.id)
+        });
     });
 
-    socket.broadcast.emit('add-users', {
-        users: [socket.id]
+    socket.on('client-connected', () => {
+        io.to(streamerSocketId).emit('add-users', {
+            users: [socket.id] 
+        });
     });
+
+    // socket.broadcast.emit('add-users', {
+    //     users: [socket.id]
+    // });
 
     socket.on('make-offer', (data) => {
         socket.to(data.to).emit('offer-made', {
@@ -49,18 +60,17 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         sockets.splice(sockets.indexOf(socket.id), 1);
-        io.emit('remove-user', socket.id);
+        streamerSocketId && io.to(streamerSocketId).emit('remove-user', socket.id);
     });
 
+    // Event sent only by the streamer socket when it starts the stream locally
     socket.on('stream-ready', () => {
-        streamerSocket = socket.id;
         socket.emit('connect-clients', {
             clients: sockets.filter(s => s !== socket.id)
         });
     });
 
     socket.on('stop-stream', () => {
-
         socket.broadcast.emit('stream-end', {
             socket: socket.id
         });
@@ -69,6 +79,4 @@ io.on('connection', (socket) => {
             clients: sockets.filter(s => s !== socket.id)
         });
     });
-
-    sockets.push(socket.id);
 });

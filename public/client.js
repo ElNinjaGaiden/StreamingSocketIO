@@ -15,6 +15,10 @@ function error (err) {
     console.warn('Error', err);
 }
 
+window.addEventListener('load', function () {
+    socket.emit('client-connected');
+});
+
 var pc = new peerConnection({ iceServers: [{ urls: "stun:stun.services.mozilla.com",
     username: "somename",
     credential: "somecredentials" }]

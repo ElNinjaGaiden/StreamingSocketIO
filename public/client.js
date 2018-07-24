@@ -1,16 +1,6 @@
 var socket = io.connect();
 var answersFrom = {};
 
-var peerConnection = window.RTCPeerConnection ||
-                    window.mozRTCPeerConnection ||
-                    window.webkitRTCPeerConnection ||
-                    window.msRTCPeerConnection;
-
-var sessionDescription = window.RTCSessionDescription ||
-                        window.mozRTCSessionDescription ||
-                        window.webkitRTCSessionDescription ||
-                        window.msRTCSessionDescription;
-
 function error (err) {
     console.warn('Error', err);
 }
@@ -19,7 +9,7 @@ window.addEventListener('load', function () {
     socket.emit('client-connected');
 });
 
-var pc = new peerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+var pc = createPeerConnection();
 
 pc.onicecandidate = function (evt) {
     console.log('onIceCandidate', evt);

@@ -3,16 +3,6 @@ var answersFrom = {};
 var peerConnections = {};
 var theStream;
 
-var peerConnection = window.RTCPeerConnection ||
-                    window.mozRTCPeerConnection ||
-                    window.webkitRTCPeerConnection ||
-                    window.msRTCPeerConnection;
-
-var sessionDescription = window.RTCSessionDescription ||
-                    window.mozRTCSessionDescription ||
-                    window.webkitRTCSessionDescription ||
-                    window.msRTCSessionDescription;
-
 navigator.getUserMedia  = navigator.getUserMedia ||
 navigator.webkitGetUserMedia ||
 navigator.mozGetUserMedia ||
@@ -129,7 +119,8 @@ socket.on('add-users', function (data) {
         document.getElementById('users').appendChild(el);
 
         //Create the peer connection to each user
-        var peerConn = new peerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+        //var peerConn = new peerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+        var peerConn = createPeerConnection();
 
         //Save the peer connection with the given client locally
         peerConnections[id] = peerConn;

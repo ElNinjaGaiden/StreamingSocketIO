@@ -19,7 +19,7 @@ window.addEventListener('load', function () {
     socket.emit('client-connected');
 });
 
-var pc = new peerConnection({ iceServers: [{ urls: "stun:stun.services.mozilla.com" }] });
+var pc = new peerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
 
 pc.oniceconnectionstatechange = function () {
     console.log('onIceConnectionStateChange', pc);

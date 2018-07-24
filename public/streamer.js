@@ -89,14 +89,18 @@ function offerClients (data) {
 }
 
 function createOffer (id, pc) {
-    pc.createOffer(function(offer) {
-        pc.setLocalDescription(new sessionDescription(offer), function () {
-            socket.emit('make-offer', {
-                offer: offer,
-                to: id
-            });
-        }, error);
-    }, error);
+    pc.createOffer()
+    .then(function (offer) {
+        return pc.setLocalDescription(new sessionDescription(offer));
+    })
+    .then(function () {
+        socket.emit('make-offer', {
+            //pc.localDescription holds the "offer" info
+            offer: pc.localDescription,
+            to: id
+        });
+    })
+    .catch(error);
 }
 
 socket.on('connect-clients', offerClients);
@@ -104,12 +108,14 @@ socket.on('disconnect-clients', offerClients);
 
 socket.on('answer-made', function (data) {
     var pc = peerConnections[data.socket];
-    pc.setRemoteDescription(new sessionDescription(data.answer), function () {
+    pc.setRemoteDescription(new sessionDescription(data.answer))
+    .then(function () {
         if (!answersFrom[data.socket]) {
             createOffer(data.socket, pc);
             answersFrom[data.socket] = true;
         }
-    }, error);
+    })
+    .catch(error);
 });
 
 socket.on('add-users', function (data) {

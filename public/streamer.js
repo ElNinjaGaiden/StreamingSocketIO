@@ -140,8 +140,8 @@ socket.on('add-users', function (data) {
 socket.on('remove-user', function (id) {
     var div = document.getElementById(id);
     var pc = peerConnections[id];
-    document.getElementById('users').removeChild(div);
+    div && document.getElementById('users').removeChild(div);
     theStream && pc && pc.removeStream(theStream);
-    pc.close();
+    pc && pc.close();
     delete peerConnections[id];
 });

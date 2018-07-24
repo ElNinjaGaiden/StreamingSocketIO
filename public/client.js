@@ -21,6 +21,10 @@ window.addEventListener('load', function () {
 
 var pc = new peerConnection({ iceServers: [{ urls: "stun:stun.services.mozilla.com" }] });
 
+pc.oniceconnectionstatechange = function () {
+    console.log('onIceConnectionStateChange', pc);
+}
+
 pc.onaddstream = function (obj) {
     console.log('on add stream', obj.stream, pc);
     var output = document.getElementById('output');

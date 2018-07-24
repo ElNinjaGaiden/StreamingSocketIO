@@ -123,10 +123,7 @@ socket.on('add-users', function (data) {
         document.getElementById('users').appendChild(el);
 
         //Create the peer connection to each user
-        var peerConn = new peerConnection({ iceServers: [{ urls: "stun:stun.services.mozilla.com",
-            username: "somename",
-            credential: "somecredentials" }]
-        });
+        var peerConn = new peerConnection({ iceServers: [{ urls: "stun:stun.services.mozilla.com" }] });
 
         //Save the peer connection with the given client locally
         peerConnections[id] = peerConn;

@@ -19,13 +19,10 @@ window.addEventListener('load', function () {
     socket.emit('client-connected');
 });
 
-var pc = new peerConnection({ iceServers: [{ urls: "stun:stun.services.mozilla.com",
-    username: "somename",
-    credential: "somecredentials" }]
-});
+var pc = new peerConnection({ iceServers: [{ urls: "stun:stun.services.mozilla.com" }] });
 
 pc.onaddstream = function (obj) {
-    console.log('on add stream', obj.stream);
+    console.log('on add stream', obj.stream, pc);
     var output = document.getElementById('output');
     output.srcObject = obj.stream;
 }

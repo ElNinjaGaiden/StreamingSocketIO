@@ -24,7 +24,7 @@ function error (err) {
 
 function startStream () {
     var mediaConstraints = {
-        //video: true, 
+        video: true, 
         audio: {
             sampleSize: 8,
             echoCancellation: true

@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('client-connected', () => {
-        io.to(streamerSocketId).emit('add-users', {
+        streamerSocketId && io.to(streamerSocketId).emit('add-users', {
             users: [socket.id] 
         });
     });

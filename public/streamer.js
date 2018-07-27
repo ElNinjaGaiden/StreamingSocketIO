@@ -18,11 +18,11 @@ function error (err) {
 
 function startStream () {
     var mediaConstraints = {
-        video: true//, 
-        // audio: {
-        //     sampleSize: 8,
-        //     echoCancellation: true
-        // }
+        video: true, 
+        audio: {
+            sampleSize: 8,
+            echoCancellation: true
+        }
     };
     navigator.getUserMedia(mediaConstraints, function (stream) {
         var input = document.getElementById('input');

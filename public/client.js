@@ -1,5 +1,6 @@
 var socket = io.connect();
 var answersFrom = {};
+var streamStatusLbl = document.getElementById('stream-status');
 
 function error (err) {
     console.warn('Error', err);
@@ -17,17 +18,22 @@ pc.onicecandidate = function (evt) {
 
 pc.oniceconnectionstatechange = function () {
     console.log('onIceConnectionStateChange', pc);
+    if(pc.iceConnectionState === 'closed') {
+        socket.emit('client-connected');
+    }
 }
 
 pc.onaddstream = function (obj) {
     console.log('on add stream', obj.stream, pc);
     var output = document.getElementById('output');
     output.srcObject = obj.stream;
+    streamStatusLbl.innerHTML = 'Stream in progress';
 }
 
-// pc.onremovestream = function () {
-//     console.log('stream removed');
-// }
+pc.onremovestream = function () {
+    console.log('stream removed');
+    streamStatusLbl.innerHTML = 'Stream stopped';
+}
 
 function createOffer (id) {
     pc.createOffer()

@@ -12,12 +12,12 @@ function createPeerConnection () {
     var pc = new peerConnection(
         { 
             iceServers: [
-                {
-                    urls: 'stun:stun.services.mozilla.com'
-                }, 
-                {
-                    urls: 'stun:stun.l.google.com:19302'
-                }, 
+                // {
+                //     urls: 'stun:stun.services.mozilla.com'
+                // }, 
+                // {
+                //     urls: 'stun:stun.l.google.com:19302'
+                // }, 
                 {
                     urls        : 'turn:numb.viagenie.ca',
                     credential  : 'W3bRTCs3rv3r',
